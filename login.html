@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Login — Amol Soft Developing Industry</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    const firebaseConfig = { apiKey: "AIzaSyAa_XwFUGvozo9q002vpCc2Cv9qN8Ey7E4", authDomain: "amolsoft-ada6b.firebaseapp.com", projectId: "amolsoft-ada6b", storageBucket: "amolsoft-ada6b.firebasestorage.app", messagingSenderId: "878640194459", appId: "1:878640194459:web:435be03fd3b828014ef73e" };
+    firebase.initializeApp(firebaseConfig);
+    // Enable offline cache for instant loading
+    firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(() => { });
+    const FAST2SMS_KEY = 'yZIH31o0GU7NfWVD5OrXnvcw29PJgRaibMBxpmh6QkqtslTeuF4VZIwmJ6pB8lqfaskb1i0RYGAQSXvP';
+    const TEAM_NUMBERS = ['9021597349', '8208519190', '8459484110'];
+    const ADMIN_EMAILS = ['siddhartdahatode62@gmail.com', 'siddharthdahatonde62@gmail.com'];
+  </script>
+  <style>
+    :root {
+      --bg: #050810;
+      --card: #111527;
+      --border: rgba(99, 179, 255, .1);
+      --blue: #4f9fff;
+      --teal: #00e5c8;
+      --text: #eef2ff;
+      --muted: #8899bb;
+      --grad: linear-gradient(135deg, #4f9fff, #00e5c8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    .orb1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(0, 229, 200, .05);
+      top: -100px;
+      left: -100px;
+    }
+
+    .orb2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(79, 159, 255, .05);
+      bottom: -80px;
+      right: -80px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 2.8rem;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--grad);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: 2rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--grad);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #050810;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      color: var(--blue);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: .3rem;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-bottom: 2rem;
+    }
+
+    /* STEPS */
+    .step {
+      display: none;
+    }
+
+    .step.on {
+      display: block;
+    }
+
+    /* ROLE TABS */
+    .roles {
+      display: flex;
+      background: rgba(255, 255, 255, .04);
+      border-radius: 10px;
+      padding: .3rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .role {
+      flex: 1;
+      padding: .55rem;
+      text-align: center;
+      border-radius: 8px;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .3s;
+      color: var(--muted);
+    }
+
+    .role.on {
+      background: var(--blue);
+      color: #050810;
+      font-weight: 600;
+    }
+
+    /* INPUTS */
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-size: .75rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+
+    input {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      width: 100%;
+      transition: all .3s;
+    }
+
+    input:focus {
+      border-color: rgba(79, 159, 255, .45);
+      box-shadow: 0 0 0 3px rgba(79, 159, 255, .07);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--grad);
+      border: none;
+      color: #050810;
+      padding: .88rem;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .3s;
+      margin-top: .5rem;
+    }
+
+    .btn:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, .08);
+    }
+
+    /* OTP BOXES */
+    .otp-row {
+      display: flex;
+      gap: .5rem;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+
+    .ob {
+      width: 46px;
+      height: 54px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      outline: none;
+      transition: all .2s;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .ob:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(79, 159, 255, .1);
+    }
+
+    .ob.err {
+      border-color: #ff6b8a;
+      animation: shake .4s ease;
+    }
+
+    /* MESSAGES */
+    .err {
+      background: rgba(255, 107, 107, .08);
+      border: 1px solid rgba(255, 107, 107, .25);
+      border-radius: 10px;
+      padding: .72rem 1rem;
+      color: #ff8fa3;
+      font-size: .83rem;
+      margin-bottom: .8rem;
+      display: none;
+    }
+
+    .suc {
+      background: rgba(0, 229, 200, .08);
+      border: 1px solid rgba(0, 229, 200, .25);
+      border-radius: 10px;
+      padding: .72rem 1rem;
+      color: var(--teal);
+      font-size: .83rem;
+      margin-bottom: .8rem;
+      display: none;
+    }
+
+    .timer {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--teal);
+      margin-bottom: .5rem;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .link a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      margin-bottom: 1.5rem;
+      transition: color .3s;
+    }
+
+    .back-link:hover {
+      color: var(--blue);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.2rem 0;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .google-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .75rem;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: .88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .7rem;
+      transition: all .3s;
+    }
+
+    .google-btn:hover {
+      background: rgba(255, 255, 255, .08);
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-6px)
+      }
+
+      75% {
+        transform: translateX(6px)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <div class="card">
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <div class="logo">
+      <div class="logo-icon">AS</div>
+      <div class="logo-text">Amol Soft <span>Dev</span></div>
+    </div>
+
+    <!-- STEP 1: Enter Email -->
+    <div class="step on" id="s1">
+      <h2>Welcome Back</h2>
+      <p class="sub">Enter your email — we'll send a login code instantly.</p>
+      <div class="roles">
+        <div class="role on" id="r-client" onclick="setRole('client',this)">👤 Client</div>
+        <div class="role" id="r-team" onclick="setRole('team',this)">⚙️ Team Member</div>
+      </div>
+      <div class="err" id="e1"></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="loginEmail" placeholder="you@email.com"
+          onkeydown="if(event.key==='Enter')sendLoginOTP()" /></div>
+      <button class="btn" id="sendBtn" onclick="sendLoginOTP()">Send Login Code →</button>
+      <div class="divider">or</div>
+      <button class="google-btn" onclick="googleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+          <path fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        </svg>
+        Continue with Google
+      </button>
+      <p class="link">New here? <a href="signup.html">Create account</a></p>
+      <p class="link" style="margin-top:.5rem;"><a href="#" onclick="showPwdReset()">Forgot password? Reset via SMS
+          OTP</a></p>
+    </div>
+
+    <!-- STEP 2: Enter OTP -->
+    <div class="step" id="s2">
+      <h2>Check Your Email</h2>
+      <p class="sub">We sent a 6-digit login code to <strong id="sentToEmail" style="color:var(--blue)"></strong></p>
+      <div class="suc on" id="s2suc" style="display:block;">✅ Login code sent! Check your inbox.</div>
+      <div class="err" id="e2"></div>
+      <div class="otp-row">
+        <input type="text" class="ob" id="o1" maxlength="1" oninput="om(this,'o2')" onkeydown="ob(event,this,'')" />
+        <input type="text" class="ob" id="o2" maxlength="1" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')" />
+        <input type="text" class="ob" id="o3" maxlength="1" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')" />
+        <input type="text" class="ob" id="o4" maxlength="1" oninput="om(this,'o5')" onkeydown="ob(event,this,'o3')" />
+        <input type="text" class="ob" id="o5" maxlength="1" oninput="om(this,'o6')" onkeydown="ob(event,this,'o4')" />
+        <input type="text" class="ob" id="o6" maxlength="1" oninput="om(this,'')" onkeydown="ob(event,this,'o5')" />
+      </div>
+      <div class="timer">Code expires in <span id="timerSpan">300</span>s</div>
+      <button class="btn" onclick="verifyLoginOTP()">Verify & Login ✓</button>
+      <button class="btn btn-ghost" style="margin-top:.6rem;" onclick="goStep(1)">← Change Email</button>
+      <p class="link">Didn't receive? <a href="#" onclick="sendLoginOTP()">Resend code</a></p>
+    </div>
+
+    <!-- SMS OTP RESET -->
+    <div class="step" id="s-reset">
+      <h2>Reset Password</h2>
+      <p class="sub">Enter your phone to receive a reset OTP via SMS.</p>
+      <div class="err" id="e-reset"></div>
+      <div class="fg"><label>Phone Number</label>
+        <div style="display:flex;gap:.5rem;">
+          <span
+            style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.75rem .9rem;white-space:nowrap;color:var(--muted);">+91</span>
+          <input type="tel" id="resetPhone" placeholder="9021597349" maxlength="10"
+            onkeydown="if(event.key==='Enter')sendResetOTP()" />
+        </div>
+      </div>
+      <button class="btn" onclick="sendResetOTP()">Send OTP →</button>
+      <button class="btn btn-ghost" style="margin-top:.6rem;" onclick="goStep(1)">← Back</button>
+    </div>
+
+    <div class="step" id="s-resetOTP">
+      <h2>Enter Reset OTP</h2>
+      <p class="sub">OTP sent to your phone.</p>
+      <div class="err" id="e-rotp"></div>
+      <div class="otp-row">
+        <input type="text" class="ob" id="r1" maxlength="1" oninput="om(this,'r2')" onkeydown="ob(event,this,'')" />
+        <input type="text" class="ob" id="r2" maxlength="1" oninput="om(this,'r3')" onkeydown="ob(event,this,'r1')" />
+        <input type="text" class="ob" id="r3" maxlength="1" oninput="om(this,'r4')" onkeydown="ob(event,this,'r2')" />
+        <input type="text" class="ob" id="r4" maxlength="1" oninput="om(this,'r5')" onkeydown="ob(event,this,'r3')" />
+        <input type="text" class="ob" id="r5" maxlength="1" oninput="om(this,'r6')" onkeydown="ob(event,this,'r4')" />
+        <input type="text" class="ob" id="r6" maxlength="1" oninput="om(this,'')" onkeydown="ob(event,this,'r5')" />
+      </div>
+      <button class="btn" onclick="verifyResetOTP()">Verify OTP ✓</button>
+      <button class="btn btn-ghost" style="margin-top:.6rem;" onclick="showPwdReset()">← Change Phone</button>
+    </div>
+
+    <div class="step" id="s-newpwd">
+      <h2>Set New Password</h2>
+      <p class="sub">OTP verified! Set your new password.</p>
+      <div class="err" id="e-newpwd"></div>
+      <div class="fg"><label>New Password</label><input type="password" id="newPwd" placeholder="Min 8 characters" />
+      </div>
+      <div class="fg"><label>Confirm Password</label><input type="password" id="confPwd" placeholder="Repeat password"
+          onkeydown="if(event.key==='Enter')doResetPwd()" /></div>
+      <button class="btn" onclick="doResetPwd()">Save New Password 🔒</button>
+    </div>
+  </div>
+
+  <script>
+    let userRole = 'client', loginOTP = null, resetOTP = null, resetPhone = null, timerInt = null;
+    let loginEmail = null, verifiedResetEmail = null;
+
+    function setRole(r, el) {
+      userRole = r;
+      document.querySelectorAll('.role').forEach(x => x.classList.remove('on'));
+      el.classList.add('on');
+    }
+
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('on'));
+      const stepMap = { 1: 's1', 2: 's2', 'reset': 's-reset', 'resetOTP': 's-resetOTP', 'newpwd': 's-newpwd' };
+      const el = document.getElementById(stepMap[n] || 's' + n);
+      if (el) el.classList.add('on');
+    }
+
+    function showErr(id, msg) { document.getElementById(id).textContent = msg; document.getElementById(id).style.display = 'block'; }
+    function hideErr(id) { document.getElementById(id).style.display = 'none'; }
+
+    // OTP box helpers
+    function om(el, nextId) {
+      if (el.value && nextId) document.getElementById(nextId).focus();
+      // Auto verify on last box
+      if (!nextId) {
+        const prefix = el.id.charAt(0);
+        const otp = [1, 2, 3, 4, 5, 6].map(n => document.getElementById(prefix + n)?.value || '').join('');
+        if (otp.length === 6) {
+          if (prefix === 'o') verifyLoginOTP();
+          else if (prefix === 'r') verifyResetOTP();
+        }
+      }
+    }
+    function ob(e, el, prevId) { if (e.key === 'Backspace' && !el.value && prevId) document.getElementById(prevId).focus(); }
+
+    function makeOTP() { return Math.floor(100000 + Math.random() * 999999).toString(); }
+
+    function startTimer(secs, spanId) {
+      clearInterval(timerInt);
+      let left = secs;
+      document.getElementById(spanId).textContent = left;
+      timerInt = setInterval(() => {
+        left--;
+        document.getElementById(spanId).textContent = left;
+        if (left <= 0) { clearInterval(timerInt); document.getElementById(spanId).textContent = 'Expired'; }
+      }, 1000);
+    }
+
+    // ── EMAIL OTP LOGIN ────────────────────────────────────
+    // VIP emails that skip OTP and login directly
+    const VIP_EMAILS = {
+      'siddhartdahatode62@gmail.com': 'Siddharth@2025',
+      'siddharthdahatonde62@gmail.com': 'Siddharth@2025'
+    };
+
+    async function sendLoginOTP() {
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      hideErr('e1');
+      if (!email || !email.includes('@')) { showErr('e1', 'Enter a valid email address.'); return; }
+
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true; btn.textContent = 'Signing in...';
+
+      // VIP AUTO-LOGIN — Siddharth skips OTP completely
+      if (VIP_EMAILS[email]) {
+        try {
+          await firebase.auth().signInWithEmailAndPassword(email, VIP_EMAILS[email]);
+          localStorage.setItem('asdi_user', JSON.stringify({ email, role: 'team' }));
+          const redirect = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+          localStorage.removeItem('redirectAfterLogin');
+          window.location.href = redirect;
+          return;
+        } catch (e) {
+          // If password wrong, fall through to OTP
+          console.log('VIP login fallback to OTP');
+        }
+      }
+
+      btn.textContent = 'Sending...';
+
+      // Check if user exists
+      try {
+        const methods = await firebase.auth().fetchSignInMethodsForEmail(email);
+        if (methods.length === 0) { showErr('e1', 'No account found with this email. Please sign up first.'); btn.disabled = false; btn.textContent = 'Send Login Code →'; return; }
+      } catch (e) {/* allow */ }
+
+      loginOTP = makeOTP();
+      loginEmail = email;
+
+      // Send via EmailJS
+      try {
+        await emailjs.send('service_amolsoft', 'template_login_otp', {
+          to_email: email,
+          otp: loginOTP,
+          app_name: 'Amol Soft Developing Industry'
+        });
+      } catch (e) {
+        // Demo mode - show OTP in console
+        console.log('LOGIN OTP (demo):', loginOTP);
+        alert('DEMO: Your login OTP is ' + loginOTP + '\n(Configure EmailJS to send real emails)');
+      }
+
+      document.getElementById('sentToEmail').textContent = email;
+      goStep(2);
+      startTimer(300, 'timerSpan');
+      document.getElementById('o1').focus();
+      btn.disabled = false; btn.textContent = 'Send Login Code →';
+    }
+
+    async function verifyLoginOTP() {
+      const entered = [1, 2, 3, 4, 5, 6].map(n => document.getElementById('o' + n).value).join('');
+      hideErr('e2');
+      if (entered.length !== 6) { showErr('e2', 'Enter all 6 digits.'); return; }
+      if (entered !== loginOTP) {
+        showErr('e2', '❌ Incorrect code. Please try again.');
+        ['o1', 'o2', 'o3', 'o4', 'o5', 'o6'].forEach(id => {
+          const el = document.getElementById(id); el.classList.add('err');
+          setTimeout(() => el.classList.remove('err'), 500);
+        });
+        return;
+      }
+
+      // OTP correct! Now sign into Firebase properly
+      clearInterval(timerInt);
+      showErr('e2', ''); hideErr('e2');
+
+      // Show loading
+      const verifyBtn = document.querySelector('#s2 .btn');
+      if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Signing in...'; }
+
+      try {
+        // Use Firebase email link sign-in (passwordless)
+        // First send the sign-in link
+        const actionCodeSettings = {
+          url: window.location.origin + '/' + (localStorage.getItem('redirectAfterLogin') || 'dashboard.html'),
+          handleCodeInApp: true
+        };
+
+        // Since we already verified OTP ourselves, sign user in using
+        // their stored password from Firestore or create a session token
+        // We use a special approach: look up their account and use signInWithEmailLink
+
+        // Check if user has a stored password hash in Firestore
+        const snap = await firebase.firestore().collection('users')
+          .where('email', '==', loginEmail).limit(1).get();
+
+        let signedIn = false;
+
+        if (!snap.empty) {
+          const userData = snap.docs[0].data();
+          // If user has a tempPassword stored (set during signup), use it
+          if (userData.tempPassword) {
+            try {
+              await firebase.auth().signInWithEmailAndPassword(loginEmail, atob(userData.tempPassword));
+              signedIn = true;
+            } catch (e) { /* try other methods */ }
+          }
+        }
+
+        if (!signedIn) {
+          // Fallback: Send Firebase email sign-in link and show message
+          await firebase.auth().sendSignInLinkToEmail(loginEmail, actionCodeSettings);
+          localStorage.setItem('emailForSignIn', loginEmail);
+          localStorage.setItem('asdi_user', JSON.stringify({ email: loginEmail, role: userRole }));
+          showErr('e2', '');
+          // Show success message - tell user to click link in email
+          document.getElementById('s2suc').style.display = 'block';
+          document.getElementById('s2suc').textContent = '✅ OTP verified! We sent a magic sign-in link to your email. Click it to enter your dashboard.';
+          if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify & Login ✓'; }
+          // Alert team
+          alertTeam('🔐 Login Alert!\nUser: ' + loginEmail + '\nRole: ' + userRole + '\nTime: ' + new Date().toLocaleString('en-IN') + '\n- Amol Soft');
+          return;
+        }
+
+        // Successfully signed in!
+        localStorage.setItem('asdi_user', JSON.stringify({ email: loginEmail, role: userRole }));
+        alertTeam('🔐 Login!\nUser: ' + loginEmail + '\nRole: ' + userRole + '\n- Amol Soft');
+
+        const redirect = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirect;
+
+      } catch (e) {
+        showErr('e2', 'Login failed: ' + e.message);
+        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify & Login ✓'; }
+      }
+    }
+
+    // Alert team via SMS
+    async function alertTeam(msg) {
+      try {
+        await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_KEY}&route=q&message=${encodeURIComponent(msg)}&flash=0&numbers=9021597349,8208519190,8459484110`,
+          { method: 'GET', headers: { 'cache-control': 'no-cache' } });
+      } catch (e) { }
+    }
+
+    // ── GOOGLE LOGIN ──────────────────────────────────────
+    async function googleLogin() {
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await firebase.auth().signInWithPopup(provider);
+        const user = result.user;
+
+        // Save/update user doc
+        await firebase.firestore().collection('users').doc(user.uid).set({
+          name: user.displayName, email: user.email, photo: user.photoURL,
+          role: userRole, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        // Notify team
+        alertTeam(`🔐 Login via Google!\nUser: ${user.displayName} (${user.email})\nRole: ${userRole}\nTime: ${new Date().toLocaleString('en-IN')}\n- Amol Soft`);
+
+        const redirect = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirect;
+      } catch (e) { showErr('e1', e.message); }
+    }
+
+    // ── SMS OTP PASSWORD RESET ────────────────────────────
+    function showPwdReset() {
+      goStep('reset');
+    }
+
+    async function sendResetOTP() {
+      const phone = document.getElementById('resetPhone').value.trim();
+      hideErr('e-reset');
+      if (!phone || phone.length !== 10) { showErr('e-reset', 'Enter valid 10-digit phone number.'); return; }
+
+      // Check if user exists with this phone
+      try {
+        const snap = await firebase.firestore().collection('users').where('phone', '==', phone).limit(1).get();
+        const snap2 = await firebase.firestore().collection('users').where('phone', '==', '+91' + phone).limit(1).get();
+        if (snap.empty && snap2.empty) { showErr('e-reset', 'No account found with this phone. Contact Siddharth.'); return; }
+        verifiedResetEmail = (snap.empty ? snap2 : snap).docs[0].data().email;
+      } catch (e) { showErr('e-reset', 'Could not verify. Try again.'); return; }
+
+      resetOTP = makeOTP();
+      resetPhone = phone;
+
+      try {
+        const res = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_KEY}&route=otp&variables_values=${resetOTP}&flash=0&numbers=${phone}`,
+          { method: 'GET', headers: { 'cache-control': 'no-cache' } });
+        const data = await res.json();
+        if (data.return === true) { goStep('resetOTP'); document.getElementById('r1').focus(); }
+        else throw new Error(data.message);
+      } catch (e) {
+        console.log('Reset OTP (demo):', resetOTP);
+        alert('DEMO: Reset OTP is ' + resetOTP);
+        goStep('resetOTP');
+        document.getElementById('r1').focus();
+      }
+    }
+
+    function verifyResetOTP() {
+      const entered = [1, 2, 3, 4, 5, 6].map(n => document.getElementById('r' + n).value).join('');
+      hideErr('e-rotp');
+      if (entered !== resetOTP) { showErr('e-rotp', 'Incorrect OTP. Try again.'); return; }
+      goStep('newpwd');
+      document.getElementById('newPwd').focus();
+    }
+
+    async function doResetPwd() {
+      const pwd = document.getElementById('newPwd').value;
+      const conf = document.getElementById('confPwd').value;
+      hideErr('e-newpwd');
+      if (pwd.length < 8) { showErr('e-newpwd', 'Password must be at least 8 characters.'); return; }
+      if (pwd !== conf) { showErr('e-newpwd', 'Passwords do not match.'); return; }
+
+      try {
+        // Send password reset email to the verified email
+        await firebase.auth().sendPasswordResetEmail(verifiedResetEmail);
+        alert('✅ Password reset link sent to ' + verifiedResetEmail + '. Check your email inbox and follow the link to complete reset.');
+        goStep(1);
+      } catch (e) { showErr('e-newpwd', 'Failed. Contact Siddharth for help.'); }
+    }
+
+    // Check if already logged in
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const redirect = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirect;
+      }
+    });
+  </script>
+</body>
+
+</html>
